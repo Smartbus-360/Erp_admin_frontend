@@ -675,7 +675,7 @@ def exam_marks_entry(request):
     section_id = request.GET.get("section_id") or request.POST.get("section_id")
     subject_id = request.GET.get("subject_id") or request.POST.get("subject_id")
 
-    exam = Exam.objects.get(id=exam_id)
+    exam = api_request(request, "GET", f"/exams/{exam_id}").json()
     subject = Subject.objects.get(id=subject_id)
     class_obj = Class.objects.get(id=class_id)
     section = Section.objects.get(id=section_id)
