@@ -36,7 +36,6 @@
 
 <script>
 const examId = "{{ exam_id }}";
-const subjectMap = {};
 
 
 // 🔐 use token already exposed by layout.html
@@ -191,7 +190,7 @@ async function loadSchedule() {
             <tr class="border-t">
                 <td class="p-2">${classSelect.options[classSelect.selectedIndex].text}</td>
                 <td>${sectionSelect.options[sectionSelect.selectedIndex].text}</td>
-                <td>${subjectMap[item.subject_id] || "-"}</td>
+                <td>${item.subject_name}</td>
                 <td>${item.exam_date}</td>
             </tr>
         `;
