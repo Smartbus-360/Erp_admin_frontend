@@ -256,6 +256,11 @@ path("exams/marks/", views.exam_marks_select, name="exam_marks_select"),
         name="exam_result_print"
     ),
 
+path(
+    "exams/<int:exam_id>/schedule/print/",
+    views.exam_schedule_print,
+    name="exam_schedule_print"
+),
 
 
 ]
