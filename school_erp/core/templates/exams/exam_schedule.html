@@ -105,11 +105,17 @@ async function loadTeachers() {
 }
 
 // ================= EVENT LISTENERS =================
-classSelect.addEventListener("change", () => {
+classSelect.addEventListener("change", async () => {
     if (classSelect.value) {
-        loadSections(classSelect.value);
+        await loadSections(classSelect.value);
+        loadSchedule();
     }
 });
+
+sectionSelect.addEventListener("change", () => {
+    loadSchedule();
+});
+
 
 // ================= ADD SCHEDULE =================
 document.getElementById("addSchedule").onclick = async () => {
@@ -136,6 +142,7 @@ document.getElementById("addSchedule").onclick = async () => {
     }
 
     alert("Schedule added successfully");
+    loadSchedule();   
 };
 
 // ================= INIT =================
@@ -143,6 +150,44 @@ loadClasses();
 loadSubjects();
 loadTeachers();
 </script>
+<script>
+// ================= LOAD SCHEDULE =================
+async function loadSchedule() {
+    if (!classSelect.value || !sectionSelect.value) return;
+
+    const res = await fetch(
+        `https://erp.backend.smartbus360.com/exams/${examId}/schedule?class_id=${classSelect.value}&section_id=${sectionSelect.value}`,
+        { headers }
+    );
+
+    const schedules = await res.json();
+
+    const tbody = document.getElementById("scheduleTable");
+    tbody.innerHTML = "";
+
+    if (schedules.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center p-4 text-gray-500">
+                    No schedule added yet
+                </td>
+            </tr>`;
+        return;
+    }
+
+    schedules.forEach(item => {
+        tbody.innerHTML += `
+            <tr class="border-t">
+                <td class="p-2">${classSelect.options[classSelect.selectedIndex].text}</td>
+                <td>${sectionSelect.options[sectionSelect.selectedIndex].text}</td>
+                <td>${item.subject_id}</td>
+                <td>${item.exam_date}</td>
+            </tr>
+        `;
+    });
+}
+</script>
+
 
 
 {% endblock %}
