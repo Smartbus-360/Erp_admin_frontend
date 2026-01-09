@@ -776,7 +776,30 @@ def exam_result(request, exam_id, class_id, section_id):
             "results": results,
         }
     )
-def exam_result_print(request, exam_id, class_id, section_id):
-    response = exam_result(request, exam_id, class_id, section_id)
-    response.template_name = "exams/exam_result_print.html"
-    return response
+def exam_schedule_print(request, exam_id):
+    class_id = request.GET.get("class_id")
+    section_id = request.GET.get("section_id")
+
+    token = request.session["auth"]["access_token"]
+
+    response = requests.get(
+        f"https://erp.backend.smartbus360.com/exams/{exam_id}/schedule",
+        params={
+            "class_id": class_id,
+            "section_id": section_id
+        },
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+
+    schedules = response.json()
+
+    return render(
+        request,
+        "exams/exam_schedule_print.html",
+        {
+            "schedules": schedules
+        }
+    )
+
