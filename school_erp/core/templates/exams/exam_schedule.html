@@ -32,10 +32,11 @@ const token = "{{ request.session.auth.access_token }}";
 
 async function loadDropdowns() {
     const [classes, sections, subjects] = await Promise.all([
-        fetch("/api/classes").then(r => r.json()),
-        fetch("/api/sections").then(r => r.json()),
-        fetch("/api/subjects").then(r => r.json())
-    ]);
+    fetch("https://erp.backend.smartbus360.com/classes", { headers }),
+    fetch("https://erp.backend.smartbus360.com/sections", { headers }),
+    fetch("https://erp.backend.smartbus360.com/subjects", { headers })
+]);
+
 
     classes.forEach(c =>
         class_id.innerHTML += `<option value="${c.id}">${c.name}</option>`
