@@ -236,6 +236,9 @@ path("messages/", views.messaging_home, name="messages_home"),
 path("messages/inbox/", views.messages_inbox, name="messages_inbox"),
 path("messages/compose/", views.messages_compose, name="messages_compose"),
 path("messages/<int:message_id>/", views.view_message, name="view_message"),
+path("exams/marks/select/", views.exam_marks_select),
+path("exams/marks/entry/", views.exam_marks_entry),
+path("exams/result/", views.exam_result),
 
 
 ]
