@@ -793,7 +793,7 @@ def exam_schedule_print(request, exam_id):
         }
     )
 
-    schedules = response.json()
+    schedules = response.json()   # ✅ IMPORTANT
 
     return render(
         request,
@@ -802,4 +802,3 @@ def exam_schedule_print(request, exam_id):
             "schedules": schedules
         }
     )
-
