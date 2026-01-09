@@ -7,6 +7,7 @@
     <select id="class_id" class="form-control"></select>
     <select id="section_id" class="form-control"></select>
     <select id="subject_id" class="form-control"></select>
+        <select id="teacher_id" class="form-control"></select>
     <input type="date" id="exam_date" class="form-control">
 </div>
 
@@ -38,6 +39,7 @@ const headers = {
 const classSelect   = document.getElementById("class_id");
 const sectionSelect = document.getElementById("section_id");
 const subjectSelect = document.getElementById("subject_id");
+const teacherSelect = document.getElementById("teacher_id");
 
 // ================= LOAD CLASSES =================
 async function loadClasses() {
@@ -85,6 +87,22 @@ async function loadSubjects() {
         subjectSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
     });
 }
+// ================= LOAD TEACHERS =================
+async function loadTeachers() {
+    const res = await fetch(
+        "https://erp.backend.smartbus360.com/employees/?role=Teacher",
+        { headers }
+    );
+
+    const employees = await res.json();
+
+    teacherSelect.innerHTML = `<option value="">Select Teacher</option>`;
+
+    employees.forEach(emp => {
+        teacherSelect.innerHTML +=
+            `<option value="${emp.id}">${emp.name}</option>`;
+    });
+}
 
 // ================= EVENT LISTENERS =================
 classSelect.addEventListener("change", () => {
@@ -105,6 +123,7 @@ document.getElementById("addSchedule").onclick = async () => {
                 section_id: sectionSelect.value,
                 schedules: [{
                     subject_id: subjectSelect.value,
+                    teacher_id: teacherSelect.value,
                     exam_date: exam_date.value
                 }]
             })
@@ -122,6 +141,7 @@ document.getElementById("addSchedule").onclick = async () => {
 // ================= INIT =================
 loadClasses();
 loadSubjects();
+loadTeachers();
 </script>
 
 
