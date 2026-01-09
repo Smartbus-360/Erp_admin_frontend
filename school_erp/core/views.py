@@ -671,11 +671,41 @@ def exam_marks_entry(request):
     if not request.session.get("auth"):
         return redirect("core:login")
 
-    exam_id = request.GET.get("exam_id")
-    class_id = request.GET.get("class_id")
-    section_id = request.GET.get("section_id")
-    subject_id = request.GET.get("subject_id")
+    exam_id = request.GET.get("exam_id") or request.POST.get("exam_id")
+    class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    section_id = request.GET.get("section_id") or request.POST.get("section_id")
+    subject_id = request.GET.get("subject_id") or request.POST.get("subject_id")
 
+    # ================= SAVE MARKS (POST) =================
+    if request.method == "POST":
+        try:
+            for key, value in request.POST.items():
+                if key.startswith("marks_") and value != "":
+                    student_id = key.replace("marks_", "")
+
+                    api_request(
+                        request,
+                        "POST",
+                        "/exams/marks",
+                        json={
+                            "exam_id": int(exam_id),
+                            "student_id": int(student_id),
+                            "subject_id": int(subject_id),
+                            "marks": int(value),
+                        }
+                    )
+        except PermissionError:
+            return redirect("core:login")
+
+        # ✅ AFTER SAVE → GO TO RESULT PAGE
+        return redirect(
+            "core:exam_result",
+            exam_id=exam_id,
+            class_id=class_id,
+            section_id=section_id
+        )
+
+    # ================= LOAD FORM (GET) =================
     try:
         exam = api_request(request, "GET", f"/exams/{exam_id}").json()
         subject = api_request(request, "GET", f"/subjects/{subject_id}").json()
@@ -692,10 +722,11 @@ def exam_marks_entry(request):
             }
         ).json()
 
-        existing_marks = api_request(
+        # convert list → dict {student_id: marks}
+        marks_rows = api_request(
             request,
             "GET",
-            "/exam-marks",
+            "/exams/marks",
             params={
                 "exam_id": exam_id,
                 "class_id": class_id,
@@ -703,6 +734,11 @@ def exam_marks_entry(request):
                 "subject_id": subject_id,
             }
         ).json()
+
+        existing_marks = {
+            row["student_id"]: row["marks"]
+            for row in marks_rows
+        }
 
     except PermissionError:
         return redirect("core:login")
@@ -779,5 +815,28 @@ def exam_schedule_print(request, exam_id):
     )
 
 def exam_result_print(request, exam_id):
-    return HttpResponse("Not implemented yet")
+    class_id = request.GET.get("class_id")
+    section_id = request.GET.get("section_id")
 
+    try:
+        exam = api_request(request, "GET", f"/exams/{exam_id}").json()
+        result = api_request(
+            request,
+            "GET",
+            f"/exams/{exam_id}/result",
+            params={
+                "class_id": class_id,
+                "section_id": section_id
+            }
+        ).json()
+    except PermissionError:
+        return redirect("core:login")
+
+    return render(
+        request,
+        "exams/exam_result_print.html",
+        {
+            "exam": exam,
+            "results": result
+        }
+    )
