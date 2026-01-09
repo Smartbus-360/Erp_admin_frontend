@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Schedule</title>
+    <style>
+        body { font-family: Arial; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { border:1px solid #000; padding:8px; }
+    </style>
+</head>
+<body onload="window.print()">
+
+<h2 style="text-align:center;">Exam Schedule</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Section</th>
+            <th>Subject</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in schedules %}
+        <tr>
+            <td>{{ s.class_name }}</td>
+            <td>{{ s.section_name }}</td>
+            <td>{{ s.subject_name }}</td>
+            <td>{{ s.exam_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
