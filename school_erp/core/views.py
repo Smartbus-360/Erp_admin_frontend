@@ -793,7 +793,7 @@ def exam_schedule_print(request, exam_id):
         }
     )
 
-    schedules = response.json()   # ✅ IMPORTANT
+    schedules = response.json()  # 🔥 THIS LINE FIXES 500 ERROR
 
     return render(
         request,
