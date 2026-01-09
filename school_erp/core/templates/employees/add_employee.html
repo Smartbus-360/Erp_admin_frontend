@@ -1,0 +1,171 @@
+{% extends "base/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="p-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-semibold">Employees | New Staff</h2>
+
+        <button class="bg-red-400 text-white px-4 py-2 rounded-full text-sm">
+            🎛 Customize
+        </button>
+    </div>
+
+    <!-- Title -->
+    <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold">Employee Form</h1>
+        <div class="flex justify-center gap-4 mt-2 text-sm">
+            <span class="flex items-center gap-2">
+                <span class="w-4 h-2 bg-indigo-500 rounded"></span> Required*
+            </span>
+            <span class="flex items-center gap-2">
+                <span class="w-4 h-2 bg-gray-400 rounded"></span> Optional
+            </span>
+        </div>
+    </div>
+
+    <!-- FORM -->
+<form class="space-y-10" onsubmit="submitEmployee(event)">
+
+        <!-- Basic Information -->
+        <div>
+            <h3 class="font-semibold mb-4">① Basic Information</h3>
+
+            <div class="grid grid-cols-3 gap-6">
+
+                <input  id="name" class="input" placeholder="Name of Employee *">
+                <input  id = "phone" class="input" placeholder="Mobile No for SMS/WhatsApp *">
+<select id="designation" class="input">
+    <option value="">Select Employee Role *</option>
+    <option value="Teacher">Teacher</option>
+    <option value="Accountant">Accountant</option>
+    <option value="Staff">Staff</option>
+</select>
+
+
+                <div>
+                    <input type="file" class="input">
+                    <p class="text-xs text-orange-500 mt-1">Max size 100KB</p>
+                </div>
+
+                <input type="date" class="input">
+                <input class="input" placeholder="Monthly Salary *">
+
+            </div>
+        </div>
+
+        <!-- Other Information -->
+        <div>
+            <h3 class="font-semibold mb-4">② Other Information</h3>
+
+            <div class="grid grid-cols-3 gap-6">
+
+                <input class="input" placeholder="Father / Husband Name">
+<select id="gender" class="input">
+    <option value="">Gender</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+    <option value="other">Other</option>
+</select>
+                <input class="input" placeholder="Experience">
+
+                <input class="input" placeholder="National ID">
+<select id="religion" class="input">
+    <option value="">Religion</option>
+    <option value="Hindu">Hindu</option>
+    <option value="Muslim">Muslim</option>
+    <option value="Christian">Christian</option>
+    <option value="Sikh">Sikh</option>
+    <option value="Other">Other</option>
+</select>
+                <input class="input" placeholder="Email Address">
+
+<input id="education" class="input" placeholder="Education">
+                <select class="input"><option>Blood Group</option></select>
+                <input type="date" class="input">
+
+<input id="address" class="input col-span-3" placeholder="Home Address">
+
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-center gap-6 mt-8">
+            <button type="reset"
+                    class="bg-orange-400 text-white px-8 py-2 rounded-full">
+                🔄 Reset
+            </button>
+
+            <button type="submit"
+                    class="bg-indigo-600 text-white px-8 py-2 rounded-full">
+                ✔ Submit
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<!-- Reusable Input Style -->
+<style>
+.input{
+    width:100%;
+    padding:10px 16px;
+    border:1px solid #c7c7ff;
+    border-radius:9999px;
+    outline:none;
+}
+.input:focus{
+    border-color:#6366f1;
+    box-shadow:0 0 0 2px rgba(99,102,241,.2);
+}
+</style>
+<script>
+async function submitEmployee(event) {
+    event.preventDefault(); // stop page reload
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const designation = document.getElementById("designation").value;
+    const gender = document.getElementById("gender").value;
+const religion = document.getElementById("religion").value;
+const education = document.getElementById("education").value.trim();
+const address = document.getElementById("address").value.trim();
+
+    if (!name || !phone || !designation) {
+        alert("Please fill all required fields");
+        return;
+    }
+
+    const payload = {
+        name: name,
+        phone: phone,
+        designation: designation,
+        gender: gender,
+    religion: religion,
+    education:education,
+    address:address
+    };
+
+    const res = await fetch("https://erp.backend.smartbus360.com/employees/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + window.ACCESS_TOKEN
+
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+        alert("Failed to add employee");
+        return;
+    }
+
+    alert("Employee added successfully");
+    window.location.href = "/employees/";
+}
+</script>
+
+{% endblock %}

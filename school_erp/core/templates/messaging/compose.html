@@ -1,0 +1,57 @@
+{% extends "base/layout.html" %}
+{% block content %}
+
+<div class="content-wrapper max-w-4xl mx-auto">
+
+<h2 class="text-xl font-semibold mb-6">Compose Message</h2>
+
+<div class="card p-6">
+<form id="messageForm" enctype="multipart/form-data">
+
+<label>Send To</label>
+<select name="send_type" class="form-control">
+    <option value="student">Students</option>
+    <option value="employee">Employees</option>
+    <option value="institute">Institute</option>
+</select>
+
+<label class="mt-4">Title</label>
+<input name="title" class="form-control">
+
+<label class="mt-4">Message</label>
+<textarea name="message" class="form-control" required></textarea>
+
+<label class="mt-4">Attachments</label>
+<input type="file" name="files" multiple>
+
+<button type="submit" class="btn btn-submit mt-6">
+Send Message
+</button>
+
+</form>
+</div>
+</div>
+
+<script>
+document.getElementById("messageForm").onsubmit = async (e) => {
+    e.preventDefault();
+    const form = new FormData(e.target);
+
+    const res = await fetch("https://erp.backend.smartbus360.com/messages/send", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + window.ACCESS_TOKEN
+        },
+        body: form
+    });
+
+    if (res.ok) {
+        alert("Message sent");
+        window.location.href = "/messages/inbox/";
+    } else {
+        alert("Failed to send message");
+    }
+};
+</script>
+
+{% endblock %}
