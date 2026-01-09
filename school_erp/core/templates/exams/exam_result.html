@@ -5,7 +5,7 @@
     {{ exam.name }} – Result
 </h2>
 
-<a href="{% url 'exam_result_print' exam.id class.id section.id %}"
+<a href="{% url 'core:exam_result_print' exam.id %}?class_id={{ class_id }}&section_id={{ section_id }}"
    target="_blank"
    class="btn btn-secondary mb-4">
 Print Result
@@ -17,24 +17,20 @@ Print Result
     <th>Roll</th>
     <th>Name</th>
     {% for subject in subjects %}
-    <th>{{ subject.name }}</th>
+        <th>{{ subject.name }}</th>
     {% endfor %}
-    <th>Total</th>
 </tr>
 </thead>
 
 <tbody>
-{% for student, marks in results.items %}
+{% for student_id, data in results.items %}
 <tr>
-    <td>{{ student.roll_no }}</td>
-    <td>{{ student.name }}</td>
-    {% set total = 0 %}
+    <td>{{ forloop.counter }}</td>
+    <td>{{ data.student_name }}</td>
+
     {% for subject in subjects %}
-        {% set m = marks.get(subject.id, 0) %}
-        <td>{{ m }}</td>
-        {% set total = total + m %}
+        <td>{{ data.marks|get_item:subject.name|default:"-" }}</td>
     {% endfor %}
-    <td class="font-semibold">{{ total }}</td>
 </tr>
 {% endfor %}
 </tbody>
