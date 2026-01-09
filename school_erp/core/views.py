@@ -561,19 +561,6 @@ def exam_schedule(request, exam_id):
         "exam_id": exam_id
     })
 
-def exam_schedule_print(request, exam_id):
-    class_id = request.GET.get("class_id")
-    section_id = request.GET.get("section_id")
-
-    schedules = api_request(
-        request,
-        "GET",
-        f"/exams/{exam_id}/schedule?class_id={class_id}&section_id={section_id}"
-    )
-
-    return render(request, "exams/exam_schedule_print.html", {
-        "schedules": schedules
-    })
 
 def fee_fine_settings(request):
     return render(request, "fees/fee_fine_settings.html")
