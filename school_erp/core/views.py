@@ -543,6 +543,16 @@ def class_wise_report(request):
 def create_exam(request):
     return render(request, "exams/create_exam.html")
 
+@login_required
+def exams_list(request):
+    try:
+        exams = api_request(request, "GET", "/exams").json()
+    except PermissionError:
+        return redirect("core:login")
+
+    return render(request, "exams/exams_list.html", {
+        "exams": exams
+    })
 
 
 
