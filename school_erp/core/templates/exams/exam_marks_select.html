@@ -1,0 +1,41 @@
+{% extends "base/layout.html" %}
+{% block content %}
+
+<h2 class="text-xl font-semibold mb-4">Add / Update Exam Marks</h2>
+
+<form method="get" action="{% url 'exam_marks_entry' %}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+    <select name="exam_id" required class="form-control">
+        <option value="">Select Exam</option>
+        {% for exam in exams %}
+        <option value="{{ exam.id }}">{{ exam.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="class_id" required class="form-control">
+        <option value="">Select Class</option>
+        {% for c in classes %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="section_id" required class="form-control">
+        <option value="">Select Section</option>
+        {% for s in sections %}
+        <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="subject_id" required class="form-control">
+        <option value="">Select Subject</option>
+        {% for sub in subjects %}
+        <option value="{{ sub.id }}">{{ sub.name }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="col-span-4 text-right">
+        <button class="btn btn-primary">Proceed</button>
+    </div>
+</form>
+
+{% endblock %}
