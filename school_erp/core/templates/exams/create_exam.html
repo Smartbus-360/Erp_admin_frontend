@@ -7,13 +7,13 @@
     {% csrf_token %}
 
     <label class="block mb-2">Exam Name</label>
-    <input type="text" id="exam_name" class="form-control mb-4" required>
+<input type="text" id="exam_name" name="name" class="form-control mb-4" required>
 
     <label class="block mb-2">Start Date</label>
-    <input type="date" id="start_date" class="form-control mb-4" required>
+<input type="date" id="start_date" name="start_date" class="form-control mb-4" required>
 
     <label class="block mb-2">End Date</label>
-    <input type="date" id="end_date" class="form-control mb-6" required>
+<input type="date" id="end_date" name="end_date" class="form-control mb-6" required>
 
     <button class="bg-blue-600 text-white px-6 py-2 rounded">
         Create Exam
