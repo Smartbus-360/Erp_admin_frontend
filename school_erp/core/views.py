@@ -539,16 +539,18 @@ def class_wise_report(request):
 #     return {
 #         "Authorization": f"Bearer {auth.get('access_token')}"
 #     }
-def exam_schedule(request, exam_id):
-    return render(
-        request,
-        "exams/exam_schedule.html",
-        {
-            "exam_id": exam_id
-        }
-    )
+
 def create_exam(request):
     return render(request, "exams/create_exam.html")
+
+
+
+
+def exam_schedule(request, exam_id):
+    return render(request, "exams/exam_schedule.html", {
+        "exam_id": exam_id
+    })
+
 def fee_fine_settings(request):
     return render(request, "fees/fee_fine_settings.html")
 # def salary_slip_view(request, payment_id):
