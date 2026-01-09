@@ -822,7 +822,11 @@
             Create New Exam
         </a>
 
-        
+            <a href="{% url 'core:exam_marks_select' %}">
+        <i class="ri-file-list-3-line"></i>
+        <span>Add / Update Exam Marks</span>
+    </a>
+
 
 
 
@@ -838,10 +842,10 @@
         </div> -->
 
         <!-- Class Tests -->
-<div x-data="{ openClassTests: false }" class="space-y-1">
+<!-- <div x-data="{ openClassTests: false }" class="space-y-1"> -->
 
     <!-- Parent -->
-    <button
+    <!-- <button
         @click="openClassTests = !openClassTests"
         class="w-full flex items-center justify-between px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
 
@@ -852,10 +856,10 @@
 
         <i class="ri-arrow-down-s-line transition-transform"
            :class="{ 'rotate-180': openClassTests }"></i>
-    </button>
+    </button> -->
 
     <!-- Submenu -->
-    <div x-show="openClassTests"
+    <!-- <div x-show="openClassTests"
          x-transition
          x-cloak
          class="ml-8 space-y-1 text-sm">
@@ -871,7 +875,7 @@
         </a>
 
     </div>
-</div>
+</div> -->
 
 
 
