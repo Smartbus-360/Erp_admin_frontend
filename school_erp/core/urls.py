@@ -242,7 +242,17 @@ path("exams/marks/", views.exam_marks_select, name="exam_marks_select"),
     views.exams_list,
     name="exams_list"
 ),
-    path("exams/marks/entry/", views.exam_marks_entry, name="exam_marks_entry"),
+path(
+        "exams/marks/",
+        views.exam_marks_select,
+        name="exam_marks_select"
+    ),
+
+    path(
+        "exams/marks/entry/",
+        views.exam_marks_entry,
+        name="exam_marks_entry"
+    ),
 
     path(
         "exams/result/<int:exam_id>/<int:class_id>/<int:section_id>/",
