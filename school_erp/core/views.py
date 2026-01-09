@@ -636,13 +636,25 @@ def view_message(request, message_id):
     })
 
 def exam_marks_select(request):
+    if not request.session.get("auth"):
+        return redirect("core:login")
+
+    try:
+        exams = api_request(request, "GET", "/exams").json()
+        classes = api_request(request, "GET", "/classes").json()
+        sections = api_request(request, "GET", "/sections").json()
+        subjects = api_request(request, "GET", "/subjects").json()
+    except PermissionError:
+        return redirect("core:login")
+
     context = {
-        "exams": Exam.objects.all(),
-        "classes": Class.objects.all(),
-        "sections": Section.objects.all(),
-        "subjects": Subject.objects.all(),
+        "exams": exams,
+        "classes": classes,
+        "sections": sections,
+        "subjects": subjects,
     }
     return render(request, "exams/exam_marks_select.html", context)
+
 def exam_marks_entry(request):
 
     exam_id = request.GET.get("exam_id") or request.POST.get("exam_id")
