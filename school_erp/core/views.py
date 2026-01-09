@@ -789,3 +789,7 @@ def exam_schedule_print(request, exam_id):
             "schedules": schedules
         }
     )
+
+def exam_result_print(request, exam_id):
+    return HttpResponse("Not implemented yet")
+
