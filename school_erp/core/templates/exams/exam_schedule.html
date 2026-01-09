@@ -1,95 +1,73 @@
 {% extends "base/layout.html" %}
-{% load static %}
 {% block content %}
 
-<div class="content-wrapper max-w-4xl">
+<h1 class="text-xl font-semibold mb-6">Exam Schedule</h1>
 
-<h2 class="text-xl font-semibold mb-4">
-  Exam Schedule – {{ exam.name }}
-</h2>
-
-<div class="mb-4 text-gray-600">
-  Class: <strong>{{ exam.class_name }}</strong>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <select id="class_id" class="form-control"></select>
+    <select id="section_id" class="form-control"></select>
+    <select id="subject_id" class="form-control"></select>
+    <input type="date" id="exam_date" class="form-control">
 </div>
 
-<form method="get" class="mb-6">
-  <label class="form-label">Section</label>
-  <select name="section_id" class="form-control w-48" onchange="this.form.submit()">
-    <option value="">Select Section</option>
-    {% for s in sections %}
-      <option value="{{ s.id }}" {% if section_id == s.id|stringformat:"s" %}selected{% endif %}>
-        {{ s.name }}
-      </option>
-    {% endfor %}
-  </select>
-</form>
-
-{% if section_id %}
-<form id="scheduleForm">
-
-<input type="hidden" name="section_id" value="{{ section_id }}">
-
-<table class="table w-full">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Subject</th>
-      <th>Teacher</th>
-    </tr>
-  </thead>
-<tbody>
-{% for s in subjects %}
-<tr data-subject="{{ s.id }}">
-  <td>
-    <input type="date"
-           class="form-control exam-date"
-           value="{% for sc in schedule %}
-                    {% if sc.subject_id == s.id %}
-                      {{ sc.exam_date }}
-                    {% endif %}
-                  {% endfor %}">
-  </td>
-
-  <td>{{ s.name }}</td>
-
-  <td>
-    <select class="form-control teacher-select">
-      <option value="">Select Teacher</option>
-      {% for t in teachers %}
-      <option value="{{ t.id }}"
-        {% for sc in schedule %}
-          {% if sc.subject_id == s.id and sc.teacher_id == t.id %}
-            selected
-          {% endif %}
-        {% endfor %}
-      >
-        {{ t.name }}
-      </option>
-      {% endfor %}
-    </select>
-  </td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
-
-<div class="mt-6 flex gap-3">
-<button type="button"
-        class="btn btn-primary"
-        onclick="saveSchedule({{ exam.id }}, {{ exam.class_id }}, {{ section_id }})">
-  Save Schedule
+<button id="addSchedule" class="bg-green-600 text-white px-4 py-2 rounded">
+    Add Schedule
 </button>
 
-  <a href="{% url 'core:exam_datesheet' exam.id section_id %}"
-     target="_blank"
-     class="btn btn-outline">
-     Print Date Sheet
-  </a>
-</div>
+<table class="mt-6 w-full border">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="p-2">Class</th>
+            <th>Section</th>
+            <th>Subject</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody id="scheduleTable"></tbody>
+</table>
 
-</form>
+<script>
+const examId = "{{ exam_id }}";
+const token = "{{ request.session.auth.access_token }}";
 
-{% endif %}
-</div>
+async function loadDropdowns() {
+    const [classes, sections, subjects] = await Promise.all([
+        fetch("/api/classes").then(r => r.json()),
+        fetch("/api/sections").then(r => r.json()),
+        fetch("/api/subjects").then(r => r.json())
+    ]);
+
+    classes.forEach(c =>
+        class_id.innerHTML += `<option value="${c.id}">${c.name}</option>`
+    );
+    sections.forEach(s =>
+        section_id.innerHTML += `<option value="${s.id}">${s.name}</option>`
+    );
+    subjects.forEach(s =>
+        subject_id.innerHTML += `<option value="${s.id}">${s.name}</option>`
+    );
+}
+
+addSchedule.onclick = async () => {
+    await fetch("https://erp.backend.smartbus360.com/exam-schedules", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            exam_id: examId,
+            class_id: class_id.value,
+            section_id: section_id.value,
+            subject_id: subject_id.value,
+            exam_date: exam_date.value
+        })
+    });
+
+    alert("Schedule added");
+};
+
+loadDropdowns();
+</script>
 
 {% endblock %}
