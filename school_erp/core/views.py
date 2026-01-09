@@ -2,15 +2,6 @@ import requests
 from django.shortcuts import render,redirect
 from functools import wraps
 from core.utils.api import api_request
-from core.models import (
-    Subject,
-    Student,
-    ExamMark,
-    Class,
-    Section,
-    Exam,
-)
-
 
 
 FASTAPI_BASE_URL = "https://erp.backend.smartbus360.com"
@@ -677,62 +668,57 @@ def exam_marks_select(request):
     return render(request, "exams/exam_marks_select.html", context)
 
 def exam_marks_entry(request):
+    if not request.session.get("auth"):
+        return redirect("core:login")
 
-    exam_id = request.GET.get("exam_id") or request.POST.get("exam_id")
-    class_id = request.GET.get("class_id") or request.POST.get("class_id")
-    section_id = request.GET.get("section_id") or request.POST.get("section_id")
-    subject_id = request.GET.get("subject_id") or request.POST.get("subject_id")
+    exam_id = request.GET.get("exam_id")
+    class_id = request.GET.get("class_id")
+    section_id = request.GET.get("section_id")
+    subject_id = request.GET.get("subject_id")
 
-    exam = api_request(request, "GET", f"/exams/{exam_id}").json()
-    subject = Subject.objects.get(id=subject_id)
-    class_obj = Class.objects.get(id=class_id)
-    section = Section.objects.get(id=section_id)
+    try:
+        exam = api_request(request, "GET", f"/exams/{exam_id}").json()
+        subject = api_request(request, "GET", f"/subjects/{subject_id}").json()
+        class_obj = api_request(request, "GET", f"/classes/{class_id}").json()
+        section = api_request(request, "GET", f"/sections/{section_id}").json()
 
-    students = Student.objects.filter(
-        class_id=class_id,
-        section_id=section_id
+        students = api_request(
+            request,
+            "GET",
+            "/students",
+            params={
+                "class_id": class_id,
+                "section_id": section_id
+            }
+        ).json()
+
+        existing_marks = api_request(
+            request,
+            "GET",
+            "/exam-marks",
+            params={
+                "exam_id": exam_id,
+                "class_id": class_id,
+                "section_id": section_id,
+                "subject_id": subject_id,
+            }
+        ).json()
+
+    except PermissionError:
+        return redirect("core:login")
+
+    return render(
+        request,
+        "exams/exam_marks_entry.html",
+        {
+            "exam": exam,
+            "subject": subject,
+            "class": class_obj,
+            "section": section,
+            "students": students,
+            "existing_marks": existing_marks,
+        }
     )
-
-    existing_marks = {
-        m.student_id: m.marks
-        for m in ExamMark.objects.filter(
-            exam_id=exam_id,
-            subject_id=subject_id,
-            class_id=class_id,
-            section_id=section_id
-        )
-    }
-
-    if request.method == "POST":
-        for student in students:
-            marks = request.POST.get(f"marks_{student.id}")
-            if marks is not None and marks != "":
-                ExamMark.objects.update_or_create(
-                    exam_id=exam_id,
-                    student_id=student.id,
-                    subject_id=subject_id,
-                    class_id=class_id,
-                    section_id=section_id,
-                    defaults={"marks": marks}
-                )
-
-        return redirect(
-            "exam_result",
-            exam_id=exam_id,
-            class_id=class_id,
-            section_id=section_id
-        )
-
-    context = {
-        "exam": exam,
-        "subject": subject,
-        "class": class_obj,
-        "section": section,
-        "students": students,
-        "existing_marks": existing_marks,
-    }
-
-    return render(request, "exams/exam_marks_entry.html", context)
 def exam_result(request, exam_id, class_id, section_id):
 
     exam = Exam.objects.get(id=exam_id)
