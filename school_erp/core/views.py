@@ -720,43 +720,37 @@ def exam_marks_entry(request):
         }
     )
 def exam_result(request, exam_id, class_id, section_id):
+    if not request.session.get("auth"):
+        return redirect("core:login")
 
-    exam = Exam.objects.get(id=exam_id)
-    class_obj = Class.objects.get(id=class_id)
-    section = Section.objects.get(id=section_id)
+    try:
+        exam = api_request(request, "GET", f"/exams/{exam_id}").json()
+        result = api_request(
+            request,
+            "GET",
+            f"/exams/{exam_id}/result",
+            params={
+                "class_id": class_id,
+                "section_id": section_id
+            }
+        ).json()
+    except PermissionError:
+        return redirect("core:login")
 
-    subjects = Subject.objects.filter(
-        examsubject__exam_id=exam_id
-    )
-
-    students = Student.objects.filter(
-        class_id=class_id,
-        section_id=section_id
-    )
-
-    results = {}
-
-    for student in students:
-        marks = {
-            m.subject_id: m.marks
-            for m in ExamMark.objects.filter(
-                exam_id=exam_id,
-                student_id=student.id
-            )
-        }
-        results[student] = marks
+    subjects = exam.get("subjects", [])
 
     return render(
         request,
         "exams/exam_result.html",
         {
             "exam": exam,
-            "class": class_obj,
-            "section": section,
             "subjects": subjects,
-            "results": results,
+            "results": result,
+            "class_id": class_id,
+            "section_id": section_id,
         }
     )
+
 def exam_schedule_print(request, exam_id):
     class_id = request.GET.get("class_id")
     section_id = request.GET.get("section_id")
