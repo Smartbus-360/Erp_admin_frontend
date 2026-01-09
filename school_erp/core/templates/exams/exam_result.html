@@ -6,11 +6,12 @@
     {{ exam.name }} – Result
 </h2>
 
-<a href="{% url 'core:exam_result_print' exam.id %}?class_id={{ class_id }}&section_id={{ section_id }}"
+<a href="{% url 'core:exam_result_print' exam.id class_id section_id %}"
    target="_blank"
    class="btn btn-secondary mb-4">
-Print Result
+    Print Result
 </a>
+
 
 <table class="table-auto w-full border">
 <thead class="bg-gray-200">
