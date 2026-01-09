@@ -1,0 +1,43 @@
+{% extends "base/layout.html" %}
+{% block content %}
+
+<h2 class="text-xl font-semibold mb-4">
+    {{ exam.name }} – Result
+</h2>
+
+<a href="{% url 'exam_result_print' exam.id class.id section.id %}"
+   target="_blank"
+   class="btn btn-secondary mb-4">
+Print Result
+</a>
+
+<table class="table-auto w-full border">
+<thead class="bg-gray-200">
+<tr>
+    <th>Roll</th>
+    <th>Name</th>
+    {% for subject in subjects %}
+    <th>{{ subject.name }}</th>
+    {% endfor %}
+    <th>Total</th>
+</tr>
+</thead>
+
+<tbody>
+{% for student, marks in results.items %}
+<tr>
+    <td>{{ student.roll_no }}</td>
+    <td>{{ student.name }}</td>
+    {% set total = 0 %}
+    {% for subject in subjects %}
+        {% set m = marks.get(subject.id, 0) %}
+        <td>{{ m }}</td>
+        {% set total = total + m %}
+    {% endfor %}
+    <td class="font-semibold">{{ total }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
