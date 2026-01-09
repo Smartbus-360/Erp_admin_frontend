@@ -2,6 +2,14 @@ import requests
 from django.shortcuts import render,redirect
 from functools import wraps
 from core.utils.api import api_request
+from core.models import (
+    Subject,
+    Student,
+    ExamMark,
+    Class,
+    Section,
+    Exam,
+)
 
 
 
