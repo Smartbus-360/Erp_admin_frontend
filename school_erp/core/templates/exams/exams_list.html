@@ -1,0 +1,41 @@
+{% extends "base/layout.html" %}
+{% block content %}
+
+<h1 class="text-xl font-semibold mb-6">Exams</h1>
+
+<a href="{% url 'core:create_exam' %}"
+   class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+    + Create New Exam
+</a>
+
+<table class="table-auto w-full border">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-2">Exam Name</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exam in exams %}
+        <tr>
+            <td class="p-2">{{ exam.name }}</td>
+            <td>{{ exam.start_date }}</td>
+            <td>{{ exam.end_date }}</td>
+            <td>
+                <a href="{% url 'core:exam_schedule' exam.id %}"
+                   class="text-blue-600 underline">
+                    Schedule
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center p-4">No exams found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
