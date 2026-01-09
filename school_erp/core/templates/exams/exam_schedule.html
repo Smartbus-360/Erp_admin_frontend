@@ -14,13 +14,13 @@
 <button id="addSchedule" class="bg-green-600 text-white px-4 py-2 rounded">
     Add Schedule
 </button>
-<a
-  href="/exams/{{ exam_id }}/schedule/print/?class_id=${classSelect.value}&section_id=${sectionSelect.value}"
-  target="_blank"
+<button
+  id="printSchedule"
   class="ml-4 bg-gray-700 text-white px-4 py-2 rounded"
 >
   Print Schedule
-</a>
+</button>
+
 
 <table class="mt-6 w-full border">
     <thead>
@@ -92,7 +92,6 @@ async function loadSubjects() {
 
     subjectSelect.innerHTML = `<option value="">Select Subject</option>`;
     subjects.forEach(s => {
-    subjectMap[s.id] = s.name;   // map id → name
     subjectSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
 });
 
@@ -196,6 +195,19 @@ async function loadSchedule() {
         `;
     });
 }
+</script>
+<script>
+document.getElementById("printSchedule").onclick = () => {
+    if (!classSelect.value || !sectionSelect.value) {
+        alert("Please select class and section first");
+        return;
+    }
+
+    const url =
+      `/exams/${examId}/schedule/print/?class_id=${classSelect.value}&section_id=${sectionSelect.value}`;
+
+    window.open(url, "_blank");
+};
 </script>
 
 
