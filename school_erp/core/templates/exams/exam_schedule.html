@@ -14,6 +14,13 @@
 <button id="addSchedule" class="bg-green-600 text-white px-4 py-2 rounded">
     Add Schedule
 </button>
+<a
+  href="/exams/{{ exam_id }}/schedule/print/?class_id=${classSelect.value}&section_id=${sectionSelect.value}"
+  target="_blank"
+  class="ml-4 bg-gray-700 text-white px-4 py-2 rounded"
+>
+  Print Schedule
+</a>
 
 <table class="mt-6 w-full border">
     <thead>
@@ -29,6 +36,8 @@
 
 <script>
 const examId = "{{ exam_id }}";
+const subjectMap = {};
+
 
 // 🔐 use token already exposed by layout.html
 const headers = {
@@ -84,8 +93,10 @@ async function loadSubjects() {
 
     subjectSelect.innerHTML = `<option value="">Select Subject</option>`;
     subjects.forEach(s => {
-        subjectSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
-    });
+    subjectMap[s.id] = s.name;   // map id → name
+    subjectSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+});
+
 }
 // ================= LOAD TEACHERS =================
 async function loadTeachers() {
@@ -180,7 +191,7 @@ async function loadSchedule() {
             <tr class="border-t">
                 <td class="p-2">${classSelect.options[classSelect.selectedIndex].text}</td>
                 <td>${sectionSelect.options[sectionSelect.selectedIndex].text}</td>
-                <td>${item.subject_id}</td>
+                <td>${subjectMap[item.subject_id] || "-"}</td>
                 <td>${item.exam_date}</td>
             </tr>
         `;
