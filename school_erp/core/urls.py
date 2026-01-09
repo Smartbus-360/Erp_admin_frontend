@@ -236,9 +236,21 @@ path("messages/", views.messaging_home, name="messages_home"),
 path("messages/inbox/", views.messages_inbox, name="messages_inbox"),
 path("messages/compose/", views.messages_compose, name="messages_compose"),
 path("messages/<int:message_id>/", views.view_message, name="view_message"),
-path("exams/marks/select/", views.exam_marks_select),
-path("exams/marks/entry/", views.exam_marks_entry),
-path("exams/result/", views.exam_result),
+path("exams/marks/", views.exam_marks_select, name="exam_marks_select"),
+    path("exams/marks/entry/", views.exam_marks_entry, name="exam_marks_entry"),
+
+    path(
+        "exams/result/<int:exam_id>/<int:class_id>/<int:section_id>/",
+        views.exam_result,
+        name="exam_result"
+    ),
+
+    path(
+        "exams/result/print/<int:exam_id>/<int:class_id>/<int:section_id>/",
+        views.exam_result_print,
+        name="exam_result_print"
+    ),
+
 
 
 ]
